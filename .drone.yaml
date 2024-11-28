@@ -1,0 +1,57 @@
+kind: pipeline
+type: docker
+name: default
+
+steps:
+  # 构建前端
+  - name: build-frontend
+    image: node:18
+    commands:
+      - cd web
+      - npm install
+      - npm run build
+
+  # 构建后端
+  - name: build-backend
+    image: golang:1.21
+    commands:
+      - cd sass
+      - go mod tidy
+      - GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o app
+
+  # 部署文件到服务器
+  - name: deploy-files
+    image: appleboy/drone-scp
+    settings:
+      host:
+        from_secret: ssh_host
+      username:
+        from_secret: ssh_username
+      password:
+        from_secret: ssh_password
+      port: 22
+      target: /home/ubuntu/myapp
+      source:
+        - sass/app
+        - web/dist/*
+        - scripts/deploy.sh
+
+  # 执行部署脚本
+  - name: execute-deploy
+    image: appleboy/drone-ssh
+    settings:
+      host:
+        from_secret: ssh_host
+      username:
+        from_secret: ssh_username
+      password:
+        from_secret: ssh_password
+      port: 22
+      script:
+        - cd /home/ubuntu/myapp
+        - chmod +x scripts/deploy.sh
+        - ./scripts/deploy.sh
+
+trigger:
+  branch:
+    - main
