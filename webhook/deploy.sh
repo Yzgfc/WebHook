@@ -15,7 +15,7 @@ export GIT_SSH_COMMAND="ssh -i /home/admin/.ssh/id_ed25519 -o StrictHostKeyCheck
 # 如果项目目录不存在，则克隆
 if [ ! -d "/home/admin/webhook/myapp" ]; then
     echo "克隆仓库..."
-    git clone git@github.com:lifejwang11/hrsass.git /home/admin/webhook/myapp
+    git clone git@github.com:Yzgfc/WebHook.git /home/admin/webhook/myapp
 else
     # 如果目录存在，拉取更新
     cd /home/admin/webhook/myapp
