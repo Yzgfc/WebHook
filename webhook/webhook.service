@@ -1,0 +1,12 @@
+[Unit]
+Description=GitHub Webhook Handler
+After=network.target
+
+[Service]
+ExecStart=/home/admin/webhook/webhook
+WorkingDirectory=/home/admin/webhook
+User=admin
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
